@@ -1,0 +1,47 @@
+# YBUILD for module
+# Copyright 2013 Jike Inc. All Rights Reserved.                                
+# Author: wangqun@jike.com(Wang Qun)
+
+cc_library(
+    name = 'module',
+    srcs = [
+      'module.cc',
+      ],
+    deps = [
+      '//base:base',
+      # '//util/segmenter/public:segmenter_base',
+      # '//util/segmenter/internal:segmenter',
+      # '//util/segmenter/internal:segmenter_manager',
+      # '//util/release:release',
+      # '//libs/third_party/re2:re2',
+      # some thrift definition
+      # '//bi/social_mining/weibo/public/seg_jump_trie:seg_jump_trie',
+      # '//bi/social_mining/weibo/public/zone_detect:zone_detect',
+      # '//bi/social_mining/proto/weibo:inner_weibo_mergeddoc_thrift', 
+      # '//bi/social_mining/proto/weibo:weibo_analysis_info_thrift',
+      # kv, MQ, babysitter, yrns
+      # '//storage/kv_store_service/client/src:kvclient',
+      # '//infrastructure/babysitter/monitor_server:monitor_server',
+      # '//sentiment/weibo/WeiboMQ:weiboMQ',
+      # '//util/yrns:yrns_manager',
+      ],
+
+    cflags = [
+      # "-pg",
+      "-pipe",
+      ],
+
+    # link_flags = [ "-static", ],
+    )
+
+cc_test(name = 'module_unittest',
+        srcs = [
+               'module_unittest.cc',
+               ],
+        deps = [
+               ':module',
+               ],
+      cflags = [
+               '-Dprivate=public',
+               ]
+    )
