@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ssh queryintent@10.100.20.214 "/opt/hadoop/program/bin/hadoop $@"

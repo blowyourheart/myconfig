@@ -1,0 +1,29 @@
+#!/bin/sh
+# only compile a cc or cpp file, it can not be used to gen-cpp header file
+# Usage: only-compile a.cc
+
+GetAbsFileName() {
+  file=$1
+  base_name=`basename $1`
+  dir_name=`dirname $1`
+  cd $dir_name
+  cd -P .
+  dir_name=`pwd`
+  echo "$dir_name/$base_name"
+}
+
+if [ $# -lt 1 ]
+then
+    echo usage: $0 cc_sourcefile head file
+    exit 1
+fi
+
+cd -P .
+
+for file in $@
+do
+  abs_name=`GetAbsFileName $file`
+  cmd="cpplint $abs_name "
+  echo $cmd
+  eval $cmd
+done

@@ -1,0 +1,2 @@
+#!/bin/sh
+ssh wangqun@10.100.94.31 $@

@@ -1,0 +1,9 @@
+#!/bin/sh
+# author: wangqun@jike.com
+# created on 2013-01-15 13:27:07
+
+if [ $# -gt 0 ]; then
+  awk 'NF == 1{ sumValue += $1} END {print sumValue}' $@
+else
+  awk 'NF == 1{ sumValue += $1} END {print sumValue}' 
+fi

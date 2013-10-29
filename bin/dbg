@@ -1,0 +1,62 @@
+#!/bin/sh
+umask 077
+if [ $# -lt 1 ]
+then
+    echo usage: dbg bin args...
+    exit 1
+fi
+dir=`pwd`
+original_dir=$dir
+# echo original dir $original_dir
+flag=""
+while [ -z "$flag" ] && [ $dir != "/" ]
+do
+  cd ../
+  dir=`pwd`
+  flag=`ls -a| grep .ymake-out`
+done
+
+if [ -z "$flag" ]
+then
+    echo "object file not found"
+    exit 2
+fi
+
+home=$dir
+tail=${original_dir#*$home}
+binDir="$home/.ymake-out/dbg/$tail"
+# binName="jump_trie_tree_test"
+binName="$1"
+# remove ext for .cc and .cpp file
+binName=${binName%.cc}
+binName=${binName%.cpp}
+absBinPath="$binDir/$binName"
+if [ ! -f "$absBinPath" ] || [ ! -x "$absBinPath" ]
+then
+    echo "$1" does not found
+    exit 3
+fi
+# echo $binPath
+log_file="/tmp/dbg"
+touch "$log_file"
+cd $original_dir
+shift 1
+cmd="$absBinPath -release_yrdata_prefix=${home} -segmenter_pool_size=1000 -segmenter_version=20120401 $*"
+exec 2>&1
+echo $cmd 
+eval $cmd 2>&1| tee "$log_file"
+if grep -q -P "unknown command line flag.*segmenter_pool_size" "$log_file"
+then
+  cmd="$absBinPath -release_yrdata_prefix=${home} $*"
+  echo $cmd 
+  eval $cmd 2>&1 | tee "$log_file"
+else
+  exit
+fi
+
+if grep -q -P "unknown command line flag.*release_yrdata_prefix" "$log_file"
+then
+  cmd="$absBinPath $*"
+  echo $cmd 
+  eval $cmd 2>&1
+fi

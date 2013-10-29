@@ -1,0 +1,18 @@
+#!/bin/bash
+# generate tag file for lookupfile plugin
+usage="usage: $0 dir filename_tag"
+if [ $# -ne 2 ]; then
+  echo $usage
+  exit 1
+fi
+if [ ! -d $1 ]; then
+  echo $1 is not a dir
+  echo $usage
+  exit 2
+fi
+
+temp_file=`mktemp -t filename_tag.XXXX`
+echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > $temp_file
+find $1  -regex '.*?\.\(c\|cpp\|cc\|sh\|py\|thrift\|proto_buf\)$' -type f -printf "%f\t%p\t1\n" | \
+     sort -f >> $temp_file 
+mv $temp_file $2

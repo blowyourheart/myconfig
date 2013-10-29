@@ -1,0 +1,2 @@
+#!/bin/sh
+sftp wangqun@10.100.94.27

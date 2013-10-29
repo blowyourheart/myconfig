@@ -1,0 +1,19 @@
+#!/bin/bash
+# author: wangqun@jike.com
+# created on 2013-05-24 19:32:49
+# compile_target  test.cc
+# 编译test.cc所在的target目录
+
+if [ $# -ne 1 ]; then
+  echo "usage $0 test.cc"
+  exit 1
+fi
+
+if [ ! -e YBUILD ]; then
+  echo YBUILD not found
+  exit 2
+fi
+target=`cat YBUILD| tr -t '\n' ' ' | FIND_YBUILD_target_via_source_file.py  $1`
+echo building target ---\> $target
+ymake_quickfix -t $target
+

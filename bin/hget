@@ -1,0 +1,6 @@
+#!/bin/sh
+
+WQ_HOME=/home/pagedetection/wangqun
+
+echo $1
+ssh pagedetection@10.100.20.74 "/opt/hadoop/program/bin/hadoop fs -ls $1"

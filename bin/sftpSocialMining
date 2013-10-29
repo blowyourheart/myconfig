@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sftp social_mining@10.100.22.87:/home/social_mining/wangqun

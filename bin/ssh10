@@ -1,0 +1,6 @@
+#!/bin/sh
+# author: wangqun@jike.com
+# created on 2012-09-18 16:55:08
+
+ssh -i ~/.ssh/dqq.id_rsa dqq@10.1.2.10 $@
+# ssh -i ~/.ssh/dqq.id_rsa dqq@58.68.241.10

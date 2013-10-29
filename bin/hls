@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo $1
+ssh social_mining@10.100.20.214 "/opt/hadoop/program/bin/hadoop fs -ls $1"

@@ -1,0 +1,11 @@
+#!/bin/bash
+# author: wangqun@jike.com
+# created on 2013-06-24 10:08:34
+# 自动打包svn目录下修改了的文件的脚本程序
+
+cwd=`pwd`
+dir_name=`basename $cwd`
+backup_file="$dir_name.`date  +%Y_%m_%d_%H_%M_%S`.tar.bz2"
+echo backup_file: $backup_file
+
+find . -regextype  "posix-egrep" -regex '.*(YBUILD|cc|h|cpp)' 2>/dev/null | xargs -t tar cjvf $backup_file

@@ -1,0 +1,40 @@
+#!/bin/sh
+exec 2>&1
+
+cd -P .
+dir=`pwd`
+original_dir=$dir
+ymake_bin="devel/ymake/ymake.sh"
+while [ ${#dir} -ge 5 ] && [ ! -x "$dir/$ymake_bin" ]
+do
+  cd ..
+  dir=`pwd`
+done
+if [ ! -x "$dir/$ymake_bin" ]; then
+  echo "cannot find $ymake_bin"
+  exit 1
+fi
+
+home=`pwd`
+cd $home
+if [ "o" = "$1" ]
+then
+  echo "************************************************ opt ************************************************"
+  cmd="$home/devel/ymake/ymake.sh t=$original_dir/... c=opt"
+  shift
+elif [ "a" = "$1" ]
+then
+  echo "************************************************ dbg test=all ************************************************"
+  cmd="$home/devel/ymake/ymake.sh t=$original_dir/...  c=dbg test=all"
+  shift
+elif [ "ot" = "$1" ]
+then
+  echo "************************************************ opt test=all ************************************************"
+  cmd="$home/devel/ymake/ymake.sh t=$original_dir/... c=opt test=all"
+  shift
+else
+  echo ===================================================== dbg ======================================================
+  cmd="$home/devel/ymake/ymake.sh t=$original_dir/... c=dbg"
+fi
+cmd="$cmd $@"
+echo $cmd; eval $cmd

@@ -1,0 +1,9 @@
+#!/bin/sh
+# give fileA fileB, output fileA and fileB's union
+# fileA and fileB must be sorted
+if [ $# -ne 2 ]; then
+  echo "usage: unionAB fileA fileB > union.fileA_fileB"
+  exit 1
+fi
+
+cat $1 $2 | sort -u

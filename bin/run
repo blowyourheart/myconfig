@@ -1,0 +1,73 @@
+#!/bin/bash
+# author: wangqun@jike.com
+# created on 2013-01-18 23:10:33
+# run script on current dir to automatically detect which is your choice
+
+
+work_dir=`pwd`
+exe_files=`find . -maxdepth 1 -perm -111 | xargs -n 1 file | grep "executable" | cut -d':' -f 1`
+#echo $exe_files
+
+array=($exe_files)
+binNum=${#array[@]}
+# echo $binNum
+if [  $binNum = "0" ]; then
+  echo "no exe found"
+  exit 1
+fi
+
+if [ $binNum = "1" ]; then
+  $exe_files
+  exit $?
+fi
+
+# there are more than 1 exe files
+statFile=".run_statistics"
+mostUse=""
+if [ -f "$statFile" ]; then
+  # cat $statFile
+  lineNum=`wc $statFile | awk '{print $2}'`
+  # echo $lineNum
+  mostUse=`tail -n 1 $statFile | awk 'NF==2{print $2}' |sort |uniq -c | head -n 1 |awk '{print $2}'`
+  # echo most often exe file is $mostUse
+fi
+
+for i in `seq 0 $((binNum-1)) `
+do
+  # echo ${array[$i]}
+  file=`basename ${array[$i]}`
+  if [ "$file" = "$mostUse" ]; then
+    echo -e [$((i+1))]"\t"$file
+  else
+    echo -e " "$((i+1))" ""\t"$file
+  fi
+done
+echo "Press C to cancel"
+
+read choice
+# echo choice: $choice
+if [ "$choice" = "c" ]; then
+  exit 0
+fi
+if [ "$choice" = "" ]; then
+  exeFile="./$mostUse"
+elif [ $choice -gt 0 ] && [ $choice -le $binNum ]; then
+  exeFile=${array[$((choice-1))]}
+else
+  echo "bad choice"
+  exit 2
+fi
+# echo $exeFile
+
+# echo write back choise to $statFile
+echo `date +%Y%m%d-%T`  `basename $exeFile` >> $statFile
+lineNum=`wc $statFile | awk '{print $2}'`
+if [ $lineNum -gt 100 ]; then
+  tempFile=`mktemp -t run.XXXXXX`
+  tail -n 100 $statFile > $tempFile
+  cat $tempFile > $statFile
+  rm $tempFile
+fi
+
+# execute this file
+$exeFile

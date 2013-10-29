@@ -1,0 +1,9 @@
+#!/bin/sh
+# give fileA fileB, output fileA - fileB
+# fileA and fileB must be sorted
+if [ $# -ne 2 ]; then
+  echo "usage: diffA fileA fileB > fileA.diff"
+  exit 1
+fi
+
+comm -23 $1 $2

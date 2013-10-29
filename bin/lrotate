@@ -1,0 +1,19 @@
+#!/bin/sh
+# Author: wangqun@jike.com (Wang Qun)
+# Date: 2012-12-16
+# Brife: left rotate fields line by line
+
+awkCmd='
+BEGIN {OFS = "\t";}
+NF <= 1 {print }
+NF > 1 {
+  firstFiled = $1;
+  for (i = 1; i < NF; ++i) {
+    $i = $(i + 1);
+  }
+  $NF = firstFiled;
+  print $0;
+}
+'
+#echo '$awkCmd'
+awk "$awkCmd" $@

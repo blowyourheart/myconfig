@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cmd="scp $@ sentiment@10.100.22.87:~/wangqun/"
+echo $cmd; eval $cmd

@@ -1,0 +1,16 @@
+#!/bin/bash
+# author: wangqun@jike.com
+# created on 2013-01-21 11:09:54
+
+if [ $# -lt 1 ]; then
+  echo "usage: $0 keywords ..."
+  exit -1
+fi
+
+chrome="/opt/google/chrome/google-chrome"
+for url 
+do
+  query="http://www.baidu.com/s?wd=$url+site%3Abaike.baidu.com&rsv_bp=0&rsv_spt=3&rsv_n=2&rsv_sug3=1&rsv_sug1=1&rsv_sug4=10&inputT=899"
+  query="http://www.baidu.com/s?wd=$url+百科&rsv_bp=0&rsv_spt=3&rsv_n=2&rsv_sug3=1&rsv_sug1=1&rsv_sug4=10&inputT=899"
+  $chrome "$query"
+done

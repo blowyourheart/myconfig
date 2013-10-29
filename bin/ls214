@@ -1,0 +1,5 @@
+#!/bin/sh
+
+WQ_HOME=/home/social_mining/wangqun
+path214=${WQ_HOME}/$1
+ssh social_mining@10.100.20.214 "ls -lh $path214"

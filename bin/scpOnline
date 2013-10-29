@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# scp $@ wangqun@10.100.94.1:/tmp
+# scp $@ wangqun@10.100.94.31:/tmp
+cmd="scp $@ wangqun@10.100.94.1:/home/wangqun/"
+echo $cmd; eval $cmd
+cmd="scp $@ wangqun@10.100.94.31:/home/wangqun/"
+echo $cmd; eval $cmd

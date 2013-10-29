@@ -1,0 +1,6 @@
+#!/bin/sh
+# author: wangqun@jike.com
+# created on 2012-10-31 10:36:10
+
+ssh -i ~/.ssh/wangqun.pem ubuntu@10.1.81.29 $@
+

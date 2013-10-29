@@ -1,0 +1,66 @@
+#!/bin/bash
+# author: wangqun@jike.com
+# created on 2013-02-18 20:57:57
+
+cd -P .
+dir=`pwd`
+original_dir=$dir
+ymake_bin="devel/ymake/ymake.sh"
+while [ ${#dir} -ge 5 ] && [ ! -x "$dir/$ymake_bin" ]
+do
+  cd ..
+  dir=`pwd`
+done
+if [ ! -x "$dir/$ymake_bin" ]; then
+  echo "cannot find $ymake_bin"
+  exit 1
+fi
+
+home=`pwd`
+cd $home
+
+#处理命令行参数
+c=dbg
+target="..."
+while getopts "t:o" arg
+do
+  case $arg in
+  t)
+    target=$OPTARG
+    ;;
+  o)
+    c=opt
+    ;;
+  ?)
+    echo use default args
+    ;;
+  esac
+done
+cmd="$home/devel/ymake/ymake.sh c=$c t=$original_dir/$target "
+echo $cmd
+#$cmd 2>&1 | grep -P '(cc|cpp):\d+' | \
+exec 2>&1
+$cmd 2>&1 | \
+while read line
+do
+  if echo $line | grep -P 'statically linked applications requires' 2>&1 1>/dev/null
+  then
+    # this is the static_link error, ignore it
+    echo $line | sed 's/\(c\|cc\|cpp\|h\):[0-9]\+//g'
+  elif echo $line | grep -P '(hpp|h|c|cc|cpp):\d+' 2>&1 1>/dev/null
+  then
+    file_path=${line%%:*}
+    # echo $file_path
+    if [ -f "$file_path" ]
+    then
+      if echo $file_path | grep -P '^/' 2>&1 1>/dev/null
+      then
+        echo $line
+      else
+        echo $home/$line
+      fi
+    fi
+  else
+    echo $line
+  fi
+done

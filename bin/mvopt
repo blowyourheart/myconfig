@@ -1,0 +1,50 @@
+#!/bin/sh
+# move opt bin file to somewhere, default is current working dir
+
+if [ $# -lt 1 ] || [ $# -gt 2 ]
+then
+    echo "usage: $0 bin [path]"
+    exit -1
+fi
+cd -P .
+dir=`pwd`
+original_dir=$dir
+# echo original dir $original_dir
+flag=""
+while [ -z "$flag" ] && [ $dir != "/" ]
+do
+  cd ../
+  dir=`pwd`
+  flag=`ls -a| grep .ymake-out`
+done
+
+if [ -z "$flag" ]
+then
+    echo "object file not found"
+    exit 2
+fi
+
+home=$dir
+tail=${original_dir#*$home}
+binDir="$home/.ymake-out/opt/$tail"
+# binName="jump_trie_tree_test"
+binName="$1"
+# remove ext for .cc and .cpp file
+binName=${binName%.cc}
+binName=${binName%.cpp}
+absBinPath="$binDir/$binName"
+if [ ! -f "$absBinPath" ] || [ ! -x "$absBinPath" ]
+then
+    echo "$1" does not found
+    exit 3
+fi
+# echo $binPath
+
+cd $original_dir
+if [ $# -eq 1 ]; then
+  cmd="cp $absBinPath ./"
+else
+  cmd="cp $absBinPath $2"
+fi
+echo $cmd
+eval $cmd

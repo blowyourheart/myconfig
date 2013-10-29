@@ -1,0 +1,4 @@
+#!/bin/bash
+
+在本机8080端口打开sock5代理服务
+ssh -CfNgv -D 8080 wangqun@10.100.94.40

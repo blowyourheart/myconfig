@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sftp wangqun@bridge.goso.cn

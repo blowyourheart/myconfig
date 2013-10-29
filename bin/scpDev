@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cmd="scp $@ wangqun@10.100.94.25:/tmp/"
+echo $cmd; eval $cmd

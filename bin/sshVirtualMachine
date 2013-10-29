@@ -1,0 +1,6 @@
+#! /bin/sh
+# author: wangqun@jike.com
+# created on 2012-10-29 10:03:06
+# login to my ubuntu 10.04 virtual machine
+
+ssh wangq@192.168.56.101 $@

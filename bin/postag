@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /home/wangq/jike/newproduct-coding/
+./nlp_goso/postagger/public/sample_postagger $@

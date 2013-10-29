@@ -1,0 +1,30 @@
+#!/usr/bin/python
+# Author: wangqun@jike.com (Wang Qun)
+# Date: 2012-12-16
+# Brife: join lines from stdin if their first fields are identical
+# fields are sepearted by whitespaces
+# make sure all lines are sorted by the first field
+
+import sys
+
+firstField = ""
+tokens = []
+
+if len(sys.argv) > 1:
+  print "Usage: linejoin < file"
+  exit(1)
+for line in sys.stdin:
+  arr = line.strip().split()
+  if len(arr) == 0:
+    continue
+  if firstField == "":
+    firstField = arr[0]
+    tokens = arr[1:]
+  elif arr[0] == firstField:
+    tokens += arr[1:]
+  else:
+    print "%s\t%s"%(firstField, "\t".join(tokens))
+    firstField = arr[0]
+    tokens = arr[1:]
+
+print "%s\t%s"%(firstField, "\t".join(tokens))

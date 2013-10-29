@@ -1,0 +1,72 @@
+#!/bin/sh
+# only compile a cc or cpp file, it can not be used to gen-cpp header file
+# Usage: only-compile a.cc
+if [ $# -lt 1 ]
+then
+    echo usage: $0 cc_sourcefile
+    exit 1
+fi
+
+dir=`pwd`
+original_dir=$dir
+ymake_bin="devel/ymake/ymake.sh"
+while [ ${#dir} -ge 5 ] && [ ! -x "$dir/$ymake_bin" ]
+do
+  cd ..
+  dir=`pwd`
+done
+if [ ! -x "$dir/$ymake_bin" ]; then
+  echo "cannot find $ymake_bin"
+  exit 1
+fi
+
+svnHome="$dir/"
+cd $original_dir
+base_source_name=`basename $1`
+dir_source_name=`dirname $1`
+cd $dir_source_name
+dir_source_name=`pwd`
+abs_source_name="$dir_source_name/$base_source_name"
+tail=${abs_source_name#*$svnHome}
+# echo $tail
+objName=`basename $1`
+# remove ext for .cc and .cpp file
+objName=${objName%.cc}
+objName=${objName%.cpp}
+objName="$objName.o"
+# echo $objName
+mkdir -p "/tmp/only_compile/"
+absObjPath="/tmp/only_compile/$objName"
+# echo $binPath
+
+cd $svnHome
+cmd="
+g++ -o $absObjPath -pipe -DOS_LINUX -c -m64 -fPIC -Wall -Werror -Wwrite-strings -Wno-sign-compare -Wuninitialized -Wno-error=deprecated-declarations -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc -fno-builtin-calloc -fno-builtin-cfree -fno-builtin-memalign -fno-builtin-posix_memalign -fno-builtin-valloc -fno-builtin-pvalloc -fno-omit-frame-pointer -fno-strict-aliasing -I. -I.ymake-out/dbg -I. -I/usr/local/build/global_client -Ithird_party/thrift/include -I.ymake-out/dbg/thrift-out -Ithrift-out -Ithird_party/boost -Ithird_party/libevent -I.ymake-out/dbg/proto-out -Iproto-out -Ithird_party/protobuf/include $tail
+"
+
+echo $cmd
+exec 2>&1
+$cmd 2>&1 | \
+while read line
+do
+  if echo $line | grep -P 'statically linked applications requires' 2>&1 1>/dev/null
+  then
+    # this is the static_link error, ignore it
+    echo $line | sed 's/\(c\|cc\|cpp\|h\):[0-9]\+//g'
+  elif echo $line | grep -P '(hpp|h|c|cc|cpp):\d+' 2>&1 1>/dev/null
+  then
+    file_path=${line%%:*}
+    # echo $file_path
+    if [ -f "$file_path" ]
+    then
+      if echo $file_path | grep -P '^/' 2>&1 1>/dev/null
+      then
+        echo $line
+      else
+        echo $svnHome/$line
+      fi
+    fi
+  else
+    echo $line
+  fi
+done
