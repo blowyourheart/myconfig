@@ -3,6 +3,7 @@ import os
 import re
 import math
 import logging
+from collections import defaultdict
 
 def ReadFile(fileName):
   f = open(fileName)
@@ -30,5 +31,5 @@ if __name__ == "__main__":
       level = logging.INFO,
       # level = logging.DEBUG,
       format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
-      datefmt='%Y-%H:%M:%S')
+      datefmt='%Y:%m:%d-%H:%M:%S')
   main()
