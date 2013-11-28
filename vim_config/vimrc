@@ -705,6 +705,7 @@ nmap <silent> <leader>ld :LUWalk<cr>
 
 """""""""""""""""""""""""""""""""""""""
 " install YBUILD quickfix
+" see https://github.com/chen3feng/typhoon-blade for details about Blade system
 function! Blade(...) 
   let l:old_makeprg = &makeprg 
   setlocal makeprg=ymake_quickfix
