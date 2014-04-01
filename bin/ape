@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -x
+
+if [ -f /global/ape/conf/dict.txt ]
+then
+    echo global file already
+else
+    sshfs ape@ft02:/global/ /global
+fi
+
+usage() {
+    echo "Usage: $(basename $0 .sh) [-h] [-p <project>] <task>" 1>&2
+    echo -e "Arguments:\n\
+        h		This help.\n\
+        e		Environment for preview task, default 'development'.\n\
+        p		Project directory."
+    echo -e "Tasks:\n\
+        d, development	Build development environment.\n\
+        t, test		Build test environment.\n\
+        start		Start tomcat.\n\
+        stop		Stop tomcat.\n\
+        r, restart	Restart tomcat.\n\
+        l, log		Tomcat log.\n\
+        list		List runing tomcat.\n\
+        p, preview	For frontend development."
+    exit 1
+}
+
+project=
+environment=
+while getopts "e:p:h" OPT; do
+    case $OPT in
+        e)
+            environment=$OPTARG;;
+        p)
+            project=$OPTARG;;
+        h)
+            usage;;
+        *)
+            usage;;
+    esac
+done
+
+if [[ -z "$environment" ]]; then
+    environment="development"
+fi
+
+shift $(($OPTIND - 1))
+task=$@
+
+if [[ -z "$task" ]]; then
+    task="preview"
+fi
+
+echo $project
+if [[ -z "$project" ]]; then
+    project=$PWD
+    while [[ ! -e $project/.git ]]; do
+        project=`dirname $project`
+    done
+fi
+echo project home is $project
+
+id=`basename $project`
+
+export TOMCAT_HOME=${HOME}/package/tomcat-${id}
+export CATALINA_PID=${TOMCAT_HOME}/catalina.pid
+
+echo "Task: $task"
+if [ -f $project/manage.py ]; then
+  # start django project
+  cd $project 
+  exec python manage.py runserver
+fi
+
+case $task in
+    "development" | "d")
+        (cd $project && ${project}/tool/build.sh development)
+        (cd $project && ${project}/tool/deploy.sh -s ${HOME}/workspace/ape-static)
+        ;;
+    "test" | "t")
+        echo "Task: $task"
+        (cd $project && ${project}/tool/build.sh test)
+        (cd $project && ${project}/tool/deploy.sh -s ${HOME}/workspace/ape-static)
+        ;;
+    "stop")
+        echo "Task: $task"
+        ${TOMCAT_HOME}/bin/catalina.sh stop -force
+        ;;
+    "start")
+        echo "Task: $task"
+        ${TOMCAT_HOME}/bin/catalina.sh start
+        ;;
+    "restart" | "r")
+        echo "Task: $task"
+        ${TOMCAT_HOME}/bin/catalina.sh stop -force
+        ${TOMCAT_HOME}/bin/catalina.sh start
+        ;;
+    "log" | "l")
+        echo "Task: $task"
+        tail -n 300 -f ${TOMCAT_HOME}/logs/${id}.log
+        ;;
+    "preview" | "p")
+        echo "Task: $task"
+        (cd $project && ${project}/tool/build.sh -f ~/workspace/ape-web/view/ $environment)
+        (cd $project && ${project}/tool/deploy.sh -l)
+        tail -n 300 -f ${TOMCAT_HOME}/logs/${id}.log
+        ;;
+    "list")
+        ps aux | grep tomcat | grep -v grep | gsed 's/.*package\/tomcat-//' | gsed 's/\/temp.*//' | grep -v gsed
+        ;;
+    *)
+        usage
+        ;;
+esac
+
