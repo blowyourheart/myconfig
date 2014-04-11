@@ -1,0 +1,27 @@
+[user]
+	name = wangqun
+	email = wangqunwhuhb@126.com
+[color]
+	ui = true
+	diff = true
+	status = true
+	branch = true
+	interactive = true
+[alias]
+	ci = commit 
+  di = diff
+	co = checkout
+	cob = checkout -b
+	br = branch
+	m = merge
+	a = add .
+	st = status
+	dbr = branch -d
+#gl = log --decorate --graph
+	ci = commit
+	l = log --oneline --decorate
+  back = archive --format=zip -o arch.zip HEAD
+	last = log -1 HEAD
+  rb = rebase
+  ll = log --graph --pretty=format:'%C(bold blue)%h%Creset %s %Cgreen(%cr)%Creset %C(yellow)%d%Creset' --abbrev-commit --date=relative
+  gl = log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)— %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
