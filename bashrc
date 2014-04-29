@@ -16,16 +16,22 @@ function parse_git_branch {
 
 # User specific aliases and functions
 export PS1='[\u@\h:\w]$(parse_git_branch)\$'
-# alias ll='ls -lh'
-# alias la='ls -a'
 if [ -f ~/.alias ]; then
   . ~/.alias
+fi
+
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
 fi
 
 # 指示python不生成pyc文件
 export PYTHONDONTWRITEBYTECODE=x
 shopt -s cdspell cdable_vars
 
-source /opt/local/etc/bash_completion.d/git-completion.bash
+# source /opt/local/etc/bash_completion.d/git-completion.bash
 
 set -o vi
+
+export GYP_DEFINES="host_arch=x64 target_arch=x64"
+export GYP_GENERATORS=make
+
