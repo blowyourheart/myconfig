@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -x
+scp $@ ape@ft02:/tmp/
